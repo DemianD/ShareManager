@@ -12,7 +12,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 'email', 'password', 'credit',
     ];
 
     /**
@@ -27,6 +27,13 @@ class User extends Authenticatable
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);
+    }
+
+    public function shares()
+    {
+        return $this->belongsToMany('App\Share')
+            ->withTimestamps()
+            ->withPivot('boughtFor', 'amount');
     }
 
 

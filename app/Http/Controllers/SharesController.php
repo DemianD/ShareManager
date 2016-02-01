@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\ShareManager\YahooFinanceApi\ApiClient;
+use App\Http\Requests\ShareRequest;
+use App\Share;
+use App\ShareManager\FinanceApi;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
-
-use App\ShareManager\OAuth\OAuthConsumer;
-use App\ShareManager\OAuth\OAuthSignatureMethod_HMAC_SHA1;
-use App\ShareManager\OAuth\OAuthRequest;
-use App\ShareManager\OAuth\OAuthUtil;
 
 
 class SharesController extends Controller
@@ -21,9 +18,16 @@ class SharesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $shares = Share::with(['prices' => function($query) {
+            $query->orderBy('created_at', 'DESC');
+        }])->orderBy('symbol', 'ASC')->get();
+
+        if($request->ajax())
+            return view('shares._shares')->with('shares', $shares->toArray());
+
+        return view('shares.shares')->with('shares', $shares->toArray());
     }
 
     /**
@@ -33,7 +37,7 @@ class SharesController extends Controller
      */
     public function create()
     {
-        //
+        return view('shares.create');
     }
 
     /**
@@ -42,9 +46,10 @@ class SharesController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ShareRequest $request)
     {
-        //
+        Share::create($request->all());
+        return redirect('/shares');
     }
 
     /**
@@ -53,9 +58,9 @@ class SharesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Share $share)
     {
-        //
+        // todo
     }
 
     /**
@@ -64,9 +69,9 @@ class SharesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Share $share)
     {
-        //
+        return view('shares.edit')->with('share', $share);
     }
 
     /**
@@ -76,9 +81,10 @@ class SharesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ShareRequest $request, Share $share)
     {
-        //
+        $share->update($request->all());
+        return redirect('/shares');
     }
 
     /**
@@ -87,16 +93,19 @@ class SharesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Share $share)
     {
-        //
+        $share->delete();
+        return redirect('/shares');
     }
 
     public function updatePrices()
     {
-        $ApiClient = new ApiClient();
-        $data = $ApiClient->getDataFromSymbols(array("YHOO", "GOOG", "MSFT"));
+        $financeApi = new FinanceApi();
 
-        dd($data);
+        $shares = Share::lists('symbol')->toArray();
+        $financeApi->fetchDataAndStore($shares);
     }
+
+
 }

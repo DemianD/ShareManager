@@ -16,6 +16,10 @@ class CreateShareUserTable extends Migration
             $table->increments('id');
             $table->integer('share_id');
             $table->integer('user_id');
+
+            $table->double('boughtFor', '6', 2);
+            $table->double('amount', '6', 2);
+
             $table->timestamps();
         });
     }

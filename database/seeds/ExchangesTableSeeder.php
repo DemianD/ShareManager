@@ -13,9 +13,11 @@ class ExhangesTableSeeder extends Seeder
     {
         $exchange = \App\Exchange::create(['name' => 'NASDAQ']);
 
-        $share = new \App\Share(['name' => 'Apple', 'symbol' => 'APPL']);
+        $share1 = new \App\Share(['name' => 'Apple', 'symbol' => 'AAPL']);
+        $share2 = new \App\Share(['name' => 'Google', 'symbol' => 'GOOG']);
 
-        $exchange->shares()->save($share);
+        $exchange->shares()->save($share1);
+        $exchange->shares()->save($share2);
 
 
     }
