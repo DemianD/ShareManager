@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSharesTable extends Migration
+class CreateGuruwatchTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,20 +12,19 @@ class CreateSharesTable extends Migration
      */
     public function up()
     {
-        Schema::create('shares', function (Blueprint $table) {
+        Schema::create('guruwatches', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('exchange_id');
-            $table->string('name');
-            $table->char('symbol', 4);
-            $table->integer('guruwatch');
+            $table->integer('share_id');
+            $table->string('title');
+            $table->string('description');
+            $table->string('link');
+            $table->dateTime('pubDate');
             $table->timestamps();
 
-            $table->foreign('exchange_id')
-                ->references('id')->on('exchanges')
+            $table->foreign('share_id')
+                ->references('id')->on('shares')
                 ->onDelete('cascade');
         });
-
-
     }
 
     /**
@@ -35,6 +34,6 @@ class CreateSharesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('shares');
+        Schema::drop('guruwatches');
     }
 }

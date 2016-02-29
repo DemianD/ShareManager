@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ShareRequest;
 use App\Share;
 use App\ShareManager\FinanceApi;
+use App\ShareManager\GuruwatchApi;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -101,11 +102,17 @@ class SharesController extends Controller
 
     public function updatePrices()
     {
-        $financeApi = new FinanceApi();
+        $shareSymbols = Share::lists('symbol')->toArray();
 
-        $shares = Share::lists('symbol')->toArray();
-        $financeApi->fetchDataAndStore($shares);
+        $financeApi = new FinanceApi($shareSymbols);
+        $financeApi->fetchDataAndStore();
     }
 
+    public function updateGuruwatch()
+    {
+        $shareSymbols = Share::lists('symbol')->toArray();
 
+        $financeApi = new FinanceApi($shareSymbols);
+        $financeApi->storeAdvices();
+    }
 }

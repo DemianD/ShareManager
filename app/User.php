@@ -32,8 +32,8 @@ class User extends Authenticatable
     public function shares()
     {
         return $this->belongsToMany('App\Share')
-            ->withTimestamps()
-            ->withPivot('boughtFor', 'amount');
+            ->withPivot('id', 'boughtFor', 'amount')
+            ->withTimestamps();
     }
 
 

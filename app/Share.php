@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Share extends Model
 {
-    protected $fillable = ['name', 'symbol', 'exchange_id'];
+    protected $fillable = ['name', 'symbol', 'guruwatch', 'exchange_id'];
 
     public function exchanges()
     {
@@ -16,6 +16,16 @@ class Share extends Model
     public function prices()
     {
         return $this->hasMany('App\SharePrice');
+    }
+
+    public function guruwatches()
+    {
+        return $this->hasMany('App\Guruwatch');
+    }
+
+    public function recentGuruwatches()
+    {
+        return $this->guruwatches()->take(10);
     }
 
     public function setSymbolAttribute($value)

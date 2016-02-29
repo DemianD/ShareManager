@@ -24,7 +24,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')
+        $schedule->command('curl http://sharemanager.i/shares/prices')
+                 ->everyMinute();
+
+        $schedule->command('curl http://sharemanager.i/shares/guruwatch')
                  ->hourly();
+
+
     }
 }
